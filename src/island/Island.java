@@ -4,28 +4,30 @@ import engine.SimulationParameters;
 import models.*;
 import models.herbivores.*;
 import models.predators.*;
+import statistics.IslandStatistics;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Island {
     private final int width;
     private final int height;
-    private final List<Creature>[][] grid;
+    private final Location[][] grid;
     private final Random rand = new Random();
+    private final IslandStatistics statistics;
 
     @SuppressWarnings("unchecked")
     public Island(int width, int height) {
         this.width = width;
         this.height = height;
-        this.grid = new List[width][height];
+        this.grid = new Location[width][height];
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                grid[i][j] = new CopyOnWriteArrayList<>();
+                grid[i][j] = new Location(SimulationParameters.MAX_CREATURES_PER_CELL);
             }
         }
+        this.statistics = new IslandStatistics(this);
         populate();
     }
 
@@ -61,24 +63,36 @@ public class Island {
     }
 
     public void addCreature(Creature creature) {
-        if (creature.isAlive() && grid[creature.getX()][creature.getY()].size() <
-                (creature instanceof Animal ? ((Animal) creature).getMaxPerCell() : SimulationParameters.MAX_CREATURES_PER_CELL)) {
-            grid[creature.getX()][creature.getY()].add(creature);
+        int x = creature.getX();
+        int y = creature.getY();
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+            int maxCapacity = (creature instanceof Animal) ? ((Animal) creature).getMaxPerCell() : grid[x][y].getMaxCapacity();
+            if (!grid[x][y].isFull() && grid[x][y].addCreature(creature)) {
+                creature.setX(x);
+                creature.setY(y);
+            }
         }
     }
 
     public void moveCreature(Creature creature, int newX, int newY) {
-        if (creature.isAlive() && grid[newX][newY].size() <
-                (creature instanceof Animal ? ((Animal) creature).getMaxPerCell() : SimulationParameters.MAX_CREATURES_PER_CELL)) {
-            grid[creature.getX()][creature.getY()].remove(creature);
-            creature.setX(newX);
-            creature.setY(newY);
-            grid[newX][newY].add(creature);
+        if (creature.isAlive() && newX >= 0 && newX < width && newY >= 0 && newY < height) {
+            int currentX = creature.getX();
+            int currentY = creature.getY();
+            if (currentX != newX || currentY != newY) {
+                int maxCapacity = (creature instanceof Animal) ? ((Animal) creature).getMaxPerCell() : grid[newX][newY].getMaxCapacity();
+                if (!grid[newX][newY].isFull() && grid[currentX][currentY].removeCreature(creature) && grid[newX][newY].addCreature(creature)) {
+                    creature.setX(newX);
+                    creature.setY(newY);
+                }
+            }
         }
     }
 
     public List<Creature> getLocation(int x, int y) {
-        return grid[x][y];
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+            return grid[x][y].getCreatures();
+        }
+        return new ArrayList<>();
     }
 
     public int getWidth() { return width; }
@@ -88,51 +102,13 @@ public class Island {
         List<Creature> allCreatures = new ArrayList<>();
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                allCreatures.addAll(grid[i][j]);
+                allCreatures.addAll(grid[i][j].getCreatures());
             }
         }
         return allCreatures;
     }
 
     public void printStatistics(int tick) {
-        int plants = 0, herbivores = 0, predators = 0;
-        for (Creature creature : getAllCreatures()) {
-            if (creature.isAlive()) {
-                if (creature instanceof Plant) plants++;
-                else if (creature instanceof Herbivore) herbivores++;
-                else if (creature instanceof Predator) predators++;
-            }
-        }
-        System.out.println("Tick " + tick + ": Plants=" + plants + ", Herbivores=" + herbivores + ", Predators=" + predators);
-
-        // Псевдографіка
-        StringBuilder sb = new StringBuilder();
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                boolean isRiver = false;
-                for (int riverX : SimulationParameters.RIVER_CELLS) {
-                    if (x == riverX) {
-                        isRiver = true;
-                        break;
-                    }
-                }
-                if (isRiver) {
-                    sb.append("🌊");
-                } else {
-                    List<Creature> location = grid[x][y];
-                    boolean found = false;
-                    for (Creature creature : location) {
-                        if (creature.isAlive()) {
-                            sb.append(creature.getUnicode());
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) sb.append("⬜");
-                }
-            }
-            sb.append("\n");
-        }
-        System.out.println(sb);
+        statistics.printStatistics(tick);
     }
 }

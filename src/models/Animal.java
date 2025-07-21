@@ -13,15 +13,15 @@ public abstract class Animal extends Creature {
     protected int maxAge;
     protected double moveProbability;
     protected int offspringCount;
-    protected double weightKg; // Вага в кг
+    protected double weightKg;
 
     public int getMaxPerCell() {
         return maxPerCell;
     }
 
-    protected int maxPerCell; // Максимальна кількість на клітинку
-    protected int speed; // Швидкість пересування
-    protected double foodNeeded; // Кількість їжі для насичення
+    protected int maxPerCell;
+    protected int speed;
+    protected double foodNeeded;
     protected int hungerLevel;
 
     public Animal(int x, int y, int energy, int maxAge, double weightKg, int maxPerCell, int speed, double foodNeeded,
@@ -35,14 +35,14 @@ public abstract class Animal extends Creature {
         this.foodNeeded = foodNeeded;
         this.moveProbability = moveProbability;
         this.offspringCount = offspringCount;
-        this.hungerLevel = 0; // Початковий рівень голоду
+        this.hungerLevel = 0;
     }
 
     public void move(Island island) {
         if (!isAlive || new Random().nextDouble() > moveProbability || hungerLevel >= foodNeeded) return;
 
         Random rand = new Random();
-        int moves = Math.min(speed, rand.nextInt(speed + 1)); // Кількість клітинок за хід
+        int moves = Math.min(speed, rand.nextInt(speed + 1));
         for (int i = 0; i < moves; i++) {
             int[][] directions = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
             int[] direction = directions[rand.nextInt(directions.length)];
@@ -51,8 +51,7 @@ public abstract class Animal extends Creature {
 
             if (isRiverCell(newX) && !canCrossRiver()) continue;
 
-            if (newX >= 0 && newX < island.getWidth() && newY >= 0 && newY < island.getHeight() &&
-                    island.getLocation(newX, newY).size() < maxPerCell) {
+            if (newX >= 0 && newX < island.getWidth() && newY >= 0 && newY < island.getHeight()) {
                 island.moveCreature(this, newX, newY);
                 break; // Рух на одну клітинку за хід
             }
@@ -71,13 +70,10 @@ public abstract class Animal extends Creature {
     }
 
     public void eat(Island island) {
-        if (!isAlive) return;
         hungerLevel++;
         if (hungerLevel >= foodNeeded) {
-            isAlive = false; // Тварина вмирає від голоду
-            return;
+            isAlive = false;
         }
-        // Логіка поїдання реалізується в підкласах
     }
 
     public Animal reproduce(Island island) {

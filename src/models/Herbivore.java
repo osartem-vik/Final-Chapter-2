@@ -34,9 +34,9 @@ public abstract class Herbivore extends Animal {
                     break;
                 }
             }
-            // Качка може їсти гусінь
+
             if (this instanceof Duck && creature instanceof Caterpillar && creature.isAlive()) {
-                double probability = 90; // 90% ймовірність для качки їсти гусінь
+                double probability = 90;
                 if (rand.nextDouble() < probability / 100.0) {
                     int energyGained = ((Caterpillar) creature).energy / 2;
                     hungerLevel = Math.max(0, hungerLevel - energyGained / 10);
@@ -49,7 +49,6 @@ public abstract class Herbivore extends Animal {
     }
 
     protected double getPlantEatProbability() {
-        // Всі травоїдні їдять рослини з 100% ймовірністю, крім качки (100% для рослин)
         return 100.0;
     }
 

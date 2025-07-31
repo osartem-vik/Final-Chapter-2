@@ -14,18 +14,18 @@ public abstract class Predator extends Animal {
         }
 
         public boolean canEat(Animal prey, Random rand) {
-            if (prey instanceof Wolf && this instanceof Wolf) return false; // Вовк не їсть вовків
-            if (prey instanceof Boa && this instanceof Boa) return false; // Удав не їсть удавів
-            if (prey instanceof Fox && this instanceof Fox) return false; // Лисиця не їсть лисиць
-            if (prey instanceof Bear && this instanceof Bear) return false; // Ведмідь не їсть ведмедів
-            if (prey instanceof Eagle && this instanceof Eagle) return false; // Орел не їсть орлів
+            if (prey instanceof Wolf && this instanceof Wolf) return false;
+            if (prey instanceof Boa && this instanceof Boa) return false;
+            if (prey instanceof Fox && this instanceof Fox) return false;
+            if (prey instanceof Bear && this instanceof Bear) return false;
+            if (prey instanceof Eagle && this instanceof Eagle) return false;
 
             double probability = getEatProbability(prey);
-            return rand.nextDouble() < probability / 100.0; // Переводимо відсотки в діапазон 0-1
+            return rand.nextDouble() < probability / 100.0;
         }
 
         protected double getEatProbability(Animal prey) {
-            // Логіка ймовірностей поїдання залежить від типу хижака
+
             if (this instanceof Wolf) {
                 if (prey instanceof Horse) return 10;
                 if (prey instanceof Deer) return 15;
@@ -64,7 +64,7 @@ public abstract class Predator extends Animal {
                 if (prey instanceof Mouse) return 90;
                 if (prey instanceof Duck) return 80;
             }
-            return 0; // Якщо немає ймовірності
+            return 0;
         }
 
         @Override

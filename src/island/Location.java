@@ -27,7 +27,7 @@ public class Location {
     }
 
     public List<Creature> getCreatures() {
-        return new ArrayList<>(creatures); // Повертаємо копію для безпечного доступу
+        return new ArrayList<>(creatures);
     }
 
     public int getCreatureCount() {

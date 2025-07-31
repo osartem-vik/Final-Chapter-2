@@ -53,7 +53,7 @@ public abstract class Animal extends Creature {
 
             if (newX >= 0 && newX < island.getWidth() && newY >= 0 && newY < island.getHeight()) {
                 island.moveCreature(this, newX, newY);
-                break; // Рух на одну клітинку за хід
+                break;
             }
         }
     }

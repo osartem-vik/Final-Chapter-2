@@ -32,14 +32,14 @@ public class Island {
     }
 
     private void populate() {
-        // Додаємо рослини
+
         for (int i = 0; i < SimulationParameters.INITIAL_PLANTS; i++) {
             int x = rand.nextInt(width);
             int y = rand.nextInt(height);
             Plant.PlantType type = rand.nextBoolean() ? Plant.PlantType.GRASS : Plant.PlantType.BUSH;
             addCreature(new Plant(x, y, type));
         }
-        // Додаємо травоїдних
+
         for (int i = 0; i < SimulationParameters.INITIAL_HERBIVORES / 10; i++) {
             addCreature(new Horse(rand.nextInt(width), rand.nextInt(height)));
             addCreature(new Deer(rand.nextInt(width), rand.nextInt(height)));
@@ -52,7 +52,7 @@ public class Island {
             addCreature(new Duck(rand.nextInt(width), rand.nextInt(height)));
             addCreature(new Caterpillar(rand.nextInt(width), rand.nextInt(height)));
         }
-        // Додаємо хижаків
+
         for (int i = 0; i < SimulationParameters.INITIAL_PREDATORS / 5; i++) {
             addCreature(new Wolf(rand.nextInt(width), rand.nextInt(height)));
             addCreature(new Boa(rand.nextInt(width), rand.nextInt(height)));

@@ -27,7 +27,6 @@ public class IslandStatistics {
         }
         System.out.println("Tick " + tick + ": Plants=" + plants + ", Herbivores=" + herbivores + ", Predators=" + predators);
 
-        // Псевдографіка
         StringBuilder sb = new StringBuilder();
         for (int y = 0; y < island.getHeight(); y++) {
             for (int x = 0; x < island.getWidth(); x++) {
